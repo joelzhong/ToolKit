@@ -20,8 +20,10 @@
     "appId": "com.markdown.reader",
     "productName": "Markdown Reader",
     "directories": {
-      "output": "dist"
+      "output": "dist",
+      "app": "."
     },
+    "artifactName": "markdown-reader-win64",
     "files": [
       "main.js",
       "preload.js",
@@ -33,7 +35,7 @@
     "win": {
       "target": [
         {
-          "target": "nsis",
+          "target": "dir",
           "arch": ["x64"]
         }
       ]
