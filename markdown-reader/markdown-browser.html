@@ -21,12 +21,15 @@
 
     .container {
       display: flex;
-      height: 100vh;
+      height: calc(100vh - 60px);
+      margin-top: 40px;
+      margin-bottom: 20px;
       overflow: hidden;
     }
 
+    /* ===== 左侧面板 ===== */
     .workspace-panel {
-      width: 250px;
+      width: 280px;
       background-color: #f5f5f5;
       border-right: 1px solid #e0e0e0;
       display: flex;
@@ -35,34 +38,85 @@
       flex-shrink: 0;
     }
 
-    .content-area {
-      flex: 1;
+    /* ===== 标签页导航 ===== */
+    .tab-nav {
       display: flex;
-      overflow: hidden;
+      background-color: #e8e8e8;
+      border-bottom: 1px solid #e0e0e0;
+      flex-shrink: 0;
     }
 
-    .workspace-header {
-      padding: 10px;
+    .tab-btn {
+      flex: 1;
+      padding: 10px 12px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      color: #666;
+      transition: all 0.2s;
+      border-bottom: 2px solid transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .tab-btn:hover {
+      color: #333;
+      background-color: #f0f0f0;
+    }
+
+    .tab-btn.active {
+      color: #0366d6;
+      border-bottom-color: #0366d6;
+      background-color: #f5f5f5;
+    }
+
+    .tab-btn .tab-icon {
+      font-size: 14px;
+    }
+
+    /* ===== 标签页内容 ===== */
+    .tab-content {
+      display: none;
+      flex: 1;
+      overflow: hidden;
+      flex-direction: column;
+    }
+
+    .tab-content.active {
+      display: flex;
+    }
+
+    .tab-header {
+      padding: 8px 10px;
       border-bottom: 1px solid #e0e0e0;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      background-color: #eee;
+      flex-shrink: 0;
     }
 
-    .workspace-header h3 {
-      font-size: 14px;
-      font-weight: 500;
+    .tab-header h3 {
+      font-size: 12px;
+      font-weight: 600;
       margin: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #555;
     }
 
-    .workspace-actions {
+    .tab-actions {
       display: flex;
       gap: 5px;
     }
 
-    .workspace-actions button {
-      width: 24px;
-      height: 24px;
+    .tab-actions button {
+      width: 22px;
+      height: 22px;
       border: none;
       background-color: transparent;
       cursor: pointer;
@@ -70,26 +124,34 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      font-size: 14px;
     }
 
-    .workspace-actions button:hover {
-      background-color: #e0e0e0;
+    .tab-actions button:hover {
+      background-color: #d0d0d0;
+    }
+
+    .tab-body {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
     }
 
     .file-list {
-      flex: 1;
-      overflow-y: auto;
-      padding: 5px;
+      padding: 4px;
     }
 
     .file-item {
-      padding: 8px 10px;
+      padding: 6px 10px;
       cursor: pointer;
       border-radius: 3px;
       font-size: 13px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .file-item:hover {
@@ -101,9 +163,16 @@
       color: white;
     }
 
+    .file-item .file-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
+    }
+
     .file-actions {
       display: none;
-      gap: 5px;
+      gap: 4px;
+      flex-shrink: 0;
     }
 
     .file-item:hover .file-actions {
@@ -111,8 +180,8 @@
     }
 
     .file-actions button {
-      width: 16px;
-      height: 16px;
+      width: 18px;
+      height: 18px;
       border: none;
       background-color: transparent;
       cursor: pointer;
@@ -120,81 +189,356 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 10px;
+      font-size: 11px;
     }
 
     .file-actions button:hover {
       background-color: rgba(255, 255, 255, 0.2);
     }
 
-    .editor-container {
-      width: 50%;
-      height: 100%;
+    /* ===== 目录树 ===== */
+    .toc-tree {
+      padding: 6px 0;
+      list-style: none;
+    }
+
+    .toc-tree ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .toc-item {
+      display: flex;
+      align-items: center;
+      padding: 3px 10px 3px 0;
+      cursor: pointer;
+      font-size: 12px;
+      color: #555;
+      white-space: nowrap;
       overflow: hidden;
-      min-width: 300px;
+      text-overflow: ellipsis;
+      border-radius: 0;
+      transition: background-color 0.15s;
+    }
+
+    .toc-item:hover {
+      background-color: #e0e0e0;
+    }
+
+    .toc-item.active {
+      background-color: #dbeafe;
+      color: #0366d6;
+    }
+
+    .toc-item.level-1 {
+      padding-left: 10px;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .toc-item.level-2 {
+      padding-left: 22px;
+      font-weight: 500;
+    }
+
+    .toc-item.level-3 {
+      padding-left: 34px;
+      font-weight: 400;
+      font-size: 11.5px;
+    }
+
+    .toc-item .toc-icon {
+      margin-right: 4px;
+      flex-shrink: 0;
+      font-size: 10px;
+      opacity: 0.6;
+    }
+
+    .toc-empty {
+      padding: 20px 10px;
+      text-align: center;
+      color: #aaa;
+      font-size: 12px;
+    }
+
+    /* ===== 右侧内容区域 ===== */
+    .content-area {
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
 
     .preview-container {
       flex: 1;
-      height: 100%;
-      overflow: hidden;
-      min-width: 300px;
-    }
-
-    .editor-container {
-      background-color: #f8f8f8;
-    }
-
-    .preview-container {
+      overflow: auto;
       background-color: white;
     }
 
-    .resizer {
-      width: 4px;
-      background-color: #e0e0e0;
-      cursor: col-resize;
-      position: relative;
-      z-index: 10;
-    }
-
-    .resizer:hover {
-      background-color: #0366d6;
-    }
-
-    .editor {
-      width: 100%;
-      height: 100%;
-      border: none;
-      padding: 20px;
-      font-size: 14px;
-      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-      resize: none;
-      outline: none;
-      background-color: #f8f8f8;
-      overflow: auto;
-    }
-
     .preview {
-      padding: 20px;
+      padding: 30px 40px;
+      max-width: 900px;
+      margin: 0 auto;
       width: 100%;
-      height: 100%;
-      overflow: auto;
       box-sizing: border-box;
-      margin: 0;
     }
 
-    .preview-container {
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
+    /* ===== 可编辑区块 ===== */
+    .md-block {
+      position: relative;
+      border-radius: 4px;
+      transition: background-color 0.2s, box-shadow 0.2s;
+      cursor: text;
+      min-height: 1em;
     }
 
-    .full-screen {
-      flex: none;
+    .md-block:hover {
+      background-color: #f8f9ff;
+    }
+
+    .md-block.editing {
+      background-color: #fff;
+      box-shadow: 0 0 0 2px #0366d6;
+      outline: none;
+    }
+
+    .md-block-editor {
       width: 100%;
+      min-height: 60px;
+      border: none;
+      outline: none;
+      resize: vertical;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      padding: 12px;
+      background-color: #fafbfc;
+      border-radius: 4px;
+      color: #333;
     }
 
-    /* Markdown样式 */
+    .md-block-editor:focus {
+      background-color: #fff;
+    }
+
+    .edit-hint {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      font-size: 10px;
+      color: #aaa;
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+      background-color: rgba(255,255,255,0.85);
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+
+    .md-block:hover .edit-hint {
+      opacity: 1;
+    }
+
+    .md-block.editing .edit-hint {
+      display: none;
+    }
+
+    /* ===== 代码块样式 ===== */
+    .code-block {
+      position: relative;
+      margin: 1em 0;
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+      overflow: hidden;
+      background-color: #fafbfc;
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 12px;
+      background-color: #f1f3f5;
+      border-bottom: 1px solid #e1e4e8;
+      font-size: 12px;
+      color: #666;
+    }
+
+    .code-lang {
+      font-weight: 500;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+
+    .code-edit-btn {
+      padding: 2px 8px;
+      font-size: 11px;
+      border: 1px solid #d0d0d0;
+      background-color: #fff;
+      border-radius: 3px;
+      cursor: pointer;
+      color: #666;
+    }
+
+    .code-edit-btn:hover {
+      background-color: #f0f0f0;
+      color: #333;
+    }
+
+    .code-content {
+      padding: 12px;
+      overflow-x: auto;
+    }
+
+    .code-content pre {
+      margin: 0;
+      background: transparent;
+      padding: 0;
+    }
+
+    .code-content code {
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .code-editor-wrapper {
+      padding: 12px;
+    }
+
+    .code-editor-wrapper textarea {
+      width: 100%;
+      min-height: 100px;
+      border: 1px solid #e1e4e8;
+      border-radius: 4px;
+      padding: 12px;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      resize: vertical;
+      outline: none;
+      background-color: #fff;
+      color: #333;
+    }
+
+    .code-editor-wrapper textarea:focus {
+      border-color: #0366d6;
+      box-shadow: 0 0 0 2px rgba(3, 102, 214, 0.15);
+    }
+
+    .code-apply-btn {
+      margin-top: 8px;
+      padding: 4px 12px;
+      font-size: 12px;
+      border: 1px solid #0366d6;
+      background-color: #0366d6;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .code-apply-btn:hover {
+      background-color: #025aa5;
+    }
+
+    /* ===== Mermaid 代码块切换 ===== */
+    .mermaid-block {
+      position: relative;
+      margin: 1em 0;
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+      overflow: hidden;
+      background-color: #fafbfc;
+    }
+
+    .mermaid-tabs {
+      display: flex;
+      background-color: #f1f3f5;
+      border-bottom: 1px solid #e1e4e8;
+    }
+
+    .mermaid-tab {
+      padding: 6px 16px;
+      font-size: 12px;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: #666;
+      font-weight: 500;
+      transition: all 0.2s;
+      border-bottom: 2px solid transparent;
+    }
+
+    .mermaid-tab:hover {
+      color: #333;
+      background-color: #e9ecef;
+    }
+
+    .mermaid-tab.active {
+      color: #0366d6;
+      border-bottom-color: #0366d6;
+      background-color: #fff;
+    }
+
+    .mermaid-view {
+      display: none;
+      padding: 16px;
+    }
+
+    .mermaid-view.active {
+      display: block;
+    }
+
+    .mermaid-graph-view {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100px;
+      overflow-x: auto;
+    }
+
+    .mermaid-graph-view svg {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .mermaid-code-view textarea {
+      width: 100%;
+      min-height: 120px;
+      border: 1px solid #e1e4e8;
+      border-radius: 4px;
+      padding: 12px;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      resize: vertical;
+      outline: none;
+      background-color: #fff;
+      color: #333;
+    }
+
+    .mermaid-code-view textarea:focus {
+      border-color: #0366d6;
+      box-shadow: 0 0 0 2px rgba(3, 102, 214, 0.15);
+    }
+
+    .mermaid-apply-btn {
+      margin-top: 8px;
+      padding: 4px 12px;
+      font-size: 12px;
+      border: 1px solid #0366d6;
+      background-color: #0366d6;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .mermaid-apply-btn:hover {
+      background-color: #025aa5;
+    }
+
+    /* ===== Markdown 渲染样式 ===== */
     .preview h1 {
       font-size: 2em;
       margin: 1em 0 0.5em;
@@ -308,6 +652,49 @@
       background-color: #f6f8fa;
     }
 
+    .preview hr {
+      border: none;
+      border-top: 1px solid #eaecef;
+      margin: 2em 0;
+    }
+
+    /* ===== 工具栏 ===== */
+    .toolbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 40px;
+      background-color: #f8f8f8;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      z-index: 100;
+    }
+
+    .toolbar button {
+      margin-right: 8px;
+      padding: 5px 12px;
+      border: 1px solid #ddd;
+      background-color: #fff;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .toolbar button:hover {
+      background-color: #f0f0f0;
+    }
+
+    .toolbar .toolbar-title {
+      margin-left: 16px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    /* ===== 状态栏 ===== */
     .status-bar {
       position: fixed;
       bottom: 0;
@@ -324,46 +711,7 @@
       justify-content: space-between;
     }
 
-    .view-toggle {
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .toolbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 40px;
-      background-color: #f8f8f8;
-      border-bottom: 1px solid #e0e0e0;
-      display: flex;
-      align-items: center;
-      padding: 0 10px;
-      z-index: 100;
-    }
-
-    .toolbar button {
-      margin-right: 10px;
-      padding: 5px 10px;
-      border: 1px solid #ddd;
-      background-color: #fff;
-      border-radius: 3px;
-      cursor: pointer;
-      font-size: 12px;
-    }
-
-    .toolbar button:hover {
-      background-color: #f0f0f0;
-    }
-
-    .container {
-      margin-top: 40px;
-      margin-bottom: 20px;
-      height: calc(100vh - 60px);
-    }
-
-    /* 模态框样式 */
+    /* ===== 模态框 ===== */
     .modal {
       position: fixed;
       top: 0;
@@ -371,11 +719,10 @@
       right: 0;
       bottom: 0;
       background-color: rgba(0, 0, 0, 0.5);
-      display: flex;
+      display: none;
       align-items: center;
       justify-content: center;
       z-index: 1000;
-      display: none;
     }
 
     .modal.active {
@@ -430,46 +777,89 @@
     .modal-actions button.primary:hover {
       background-color: #025aa5;
     }
+
+    /* ===== 滚动条美化 ===== */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: #c1c1c1;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: #a1a1a1;
+    }
   </style>
 </head>
 <body>
   <div class="toolbar">
     <button onclick="openFile()">打开</button>
     <button onclick="saveFile()">保存</button>
-    <button onclick="toggleView()">切换视图</button>
-    <span style="margin-left: 20px; font-size: 14px; font-weight: 500;">Markdown Reader</span>
-  </div>
-  
-  <div class="container">
-    <div class="workspace-panel">
-      <div class="workspace-header">
-        <h3>工作空间</h3>
-        <div class="workspace-actions">
-          <button onclick="createNewFile()" title="新建文件">+</button>
-          <button onclick="refreshFiles()" title="刷新">↻</button>
-        </div>
-      </div>
-      <div class="file-list" id="fileList">
-        <!-- 文件列表将通过JavaScript动态生成 -->
-      </div>
-    </div>
-    <div class="content-area">
-      <div class="editor-container">
-        <textarea class="editor" placeholder="在此输入Markdown内容..."></textarea>
-      </div>
-      <div class="resizer" id="resizer"></div>
-      <div class="preview-container">
-        <div class="preview"></div>
-      </div>
-    </div>
-  </div>
-  
-  <div class="status-bar">
-    <div class="file-info">未命名.md</div>
-    <div class="view-toggle">按 Ctrl+Enter 切换视图</div>
+    <button onclick="exportHTML()">导出HTML</button>
+    <span class="toolbar-title">Markdown Reader</span>
   </div>
 
-  <input type="file" id="fileInput" style="display: none;" accept=".md,.markdown,.txt">
+  <div class="container">
+    <!-- 左侧面板 -->
+    <div class="workspace-panel">
+      <!-- 标签页导航 -->
+      <div class="tab-nav">
+        <button class="tab-btn active" data-tab="workspace" onclick="switchTab('workspace')">
+          工作空间
+        </button>
+        <button class="tab-btn" data-tab="toc" onclick="switchTab('toc')">
+          目录
+        </button>
+      </div>
+
+      <!-- 工作空间标签页 -->
+      <div class="tab-content active" id="workspaceTab">
+        <div class="tab-header">
+          <h3>文件列表</h3>
+          <div class="tab-actions">
+            <button onclick="createNewFile()" title="新建文件">+</button>
+            <button onclick="refreshFiles()" title="刷新">↻</button>
+          </div>
+        </div>
+        <div class="tab-body">
+          <div class="file-list" id="fileList"></div>
+        </div>
+      </div>
+
+      <!-- 目录标签页 -->
+      <div class="tab-content" id="tocTab">
+        <div class="tab-header">
+          <h3>文档目录</h3>
+        </div>
+        <div class="tab-body">
+          <div id="tocTree">
+            <div class="toc-empty">暂无目录</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右侧内容区域 -->
+    <div class="content-area">
+      <div class="preview-container" id="previewContainer">
+        <div class="preview" id="preview"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="status-bar">
+    <div class="file-info" id="fileInfo">未命名.md</div>
+    <div>点击区块可编辑 | Ctrl+S 保存 | Ctrl+O 打开 | 支持HTML拖入转换</div>
+  </div>
+
+  <input type="file" id="fileInput" style="display: none;" accept=".md,.markdown,.txt,.html,.htm">
   <a id="downloadLink" style="display: none;"></a>
 
   <!-- 新建文件模态框 -->
@@ -484,138 +874,605 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/highlight.js/lib/core.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/highlight.js/lib/languages/javascript.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/highlight.js/lib/languages/python.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/highlight.js/lib/languages/java.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/highlight.js/lib/languages/cpp.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/highlight.js/styles/github.min.js"></script>
+  <!-- 删除确认模态框 -->
+  <div class="modal" id="deleteModal">
+    <div class="modal-content">
+      <h3>确认删除</h3>
+      <p style="margin-bottom:15px;color:#666;">确定要删除此文件吗？此操作不可撤销。</p>
+      <div class="modal-actions">
+        <button onclick="closeDeleteModal()">取消</button>
+        <button class="primary" style="background-color:#dc3545;border-color:#dc3545;" onclick="confirmDelete()">删除</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 本地依赖，支持离线使用 -->
+  <link rel="stylesheet" href="css/github.min.css">
+  <script src="js/marked.min.js"></script>
+  <script src="js/highlight.core.min.js"></script>
+  <script src="js/highlight.javascript.min.js"></script>
+  <script src="js/highlight.python.min.js"></script>
+  <script src="js/highlight.java.min.js"></script>
+  <script src="js/highlight.cpp.min.js"></script>
+  <script src="js/highlight.sql.min.js"></script>
+  <script src="js/highlight.json.min.js"></script>
+  <script src="js/mermaid.min.js"></script>
+  <script src="js/turndown.min.js"></script>
 
   <script>
-    // 配置marked
-    marked.setOptions({
-      highlight: function(code, lang) {
-        if (lang && hljs.getLanguage(lang)) {
-          return hljs.highlight(code, { language: lang }).value;
-        }
-        return hljs.highlightAuto(code).value;
-      },
-      breaks: true,
-      gfm: true
+    // ===== 初始化 Mermaid =====
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'default',
+      securityLevel: 'loose',
+      suppressErrors: true
     });
 
-    // 检查是否在Electron环境中
-    const isElectron = typeof window.electron !== 'undefined';
-
-    // 如果在Electron环境中，监听文件夹打开事件
-    if (isElectron) {
-      window.electron.ipcRenderer.on('folder-opened', (event, data) => {
-        // 清空现有文件列表
-        files = [];
-        
-        // 添加文件夹中的Markdown文件
-        data.files.forEach(file => {
-          files.push({
-            id: generateId(),
-            name: file.name,
-            content: file.content,
-            path: file.path
-          });
+    // ===== 初始化 TurndownService (HTML转Markdown) =====
+    let turndownService = null;
+    function initTurndown() {
+      if (typeof TurndownService !== 'undefined') {
+        turndownService = new TurndownService({
+          headingStyle: 'atx',
+          codeBlockStyle: 'fenced',
+          bulletListMarker: '-'
         });
-        
-        saveFiles();
-        renderFileList();
-        
-        // 打开第一个文件
-        if (files.length > 0) {
-          openFileFromList(files[0].id);
-        }
-      });
+        // 添加自定义规则
+        turndownService.addRule('strikethrough', {
+          filter: ['del', 's'],
+          replacement: function(content) {
+            return '~~' + content + '~~';
+          }
+        });
+      }
     }
 
-    const editor = document.querySelector('.editor');
-    const preview = document.querySelector('.preview');
-    const editorContainer = document.querySelector('.editor-container');
-    const previewContainer = document.querySelector('.preview-container');
-    const fileInfo = document.querySelector('.file-info');
+    // ===== 全局状态 =====
+    let currentFile = null;
+    let files = [];
+    let markdownSource = '';
+    let blockMap = [];
+    let mermaidCounter = 0;
+    let codeBlockCounter = 0;
+    let isEditing = false;
+    let tocClickScrolling = false;
+
+    // ===== DOM 引用 =====
+    const preview = document.getElementById('preview');
+    const previewContainer = document.getElementById('previewContainer');
+    const fileInfo = document.getElementById('fileInfo');
     const fileInput = document.getElementById('fileInput');
     const downloadLink = document.getElementById('downloadLink');
     const fileList = document.getElementById('fileList');
     const newFileModal = document.getElementById('newFileModal');
     const newFileName = document.getElementById('newFileName');
+    const deleteModal = document.getElementById('deleteModal');
+    const tocTree = document.getElementById('tocTree');
+    let pendingDeleteFileId = null;  // 待删除的文件ID
 
-    // 滚动同步功能
-    let isScrolling = false;
+    // ===== 检查Electron环境 =====
+    // 检测 Electron 环境
+    const isElectron = typeof window.electronAPI !== 'undefined';
 
-    // 编辑器滚动时同步预览
-    editor.addEventListener('scroll', () => {
-      if (!isScrolling) {
-        isScrolling = true;
-        const editorHeight = editor.scrollHeight - editor.clientHeight;
-        const previewHeight = preview.scrollHeight - preview.clientHeight;
-        const scrollRatio = editor.scrollTop / editorHeight;
-        preview.scrollTop = scrollRatio * previewHeight;
-        setTimeout(() => isScrolling = false, 10);
-      }
-    });
-
-    // 预览滚动时同步编辑器
-    preview.addEventListener('scroll', () => {
-      if (!isScrolling) {
-        isScrolling = true;
-        const previewHeight = preview.scrollHeight - preview.clientHeight;
-        const editorHeight = editor.scrollHeight - editor.clientHeight;
-        const scrollRatio = preview.scrollTop / previewHeight;
-        editor.scrollTop = scrollRatio * editorHeight;
-        setTimeout(() => isScrolling = false, 10);
-      }
-    });
-
-    let currentFile = null;
-    let isSplitView = true;
-    let files = [];
-
-    // 从localStorage加载文件
-    function loadFiles() {
-      const savedFiles = localStorage.getItem('markdown-files');
-      if (savedFiles) {
-        files = JSON.parse(savedFiles);
-      } else {
-        // 创建默认文件
-        files = [
-          {
-            id: generateId(),
-            name: 'README.md',
-            content: '# Markdown Reader\n\n欢迎使用Markdown阅读器！\n\n## 功能特性\n\n- 实时预览\n- 代码高亮\n- 工作空间管理\n- 文件切换\n\n## 使用方法\n\n1. 在左侧工作空间中创建或打开文件\n2. 在编辑器中输入Markdown内容\n3. 右侧实时显示预览效果\n4. 使用工具栏按钮保存文件\n'
+    // Electron 环境下的文件操作
+    if (isElectron) {
+      // 监听文件夹打开事件（保留旧接口兼容）
+      if (window.electron && window.electron.ipcRenderer) {
+        window.electron.ipcRenderer.on('folder-opened', (event, data) => {
+          files = [];
+          data.files.forEach(file => {
+            files.push({
+              id: generateId(),
+              name: file.name,
+              content: file.content,
+              path: file.path
+            });
+          });
+          saveFiles();
+          renderFileList();
+          if (files.length > 0) {
+            openFileFromList(files[0].id);
           }
-        ];
+        });
+      }
+    }
+
+    // ===== 标签页切换 =====
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+      document.querySelector(`.tab-btn[data-tab="${tabName}"]`).classList.add('active');
+      document.getElementById(tabName + 'Tab').classList.add('active');
+    }
+
+    // ===== Markdown 解析与区块分割 =====
+
+    function parseBlocks(source) {
+      const lines = source.split('\n');
+      const blocks = [];
+      let i = 0;
+
+      while (i < lines.length) {
+        const line = lines[i];
+
+        if (line.trim() === '') {
+          i++;
+          continue;
+        }
+
+        const headingMatch = line.match(/^(#{1,6})\s+(.+)/);
+        if (headingMatch) {
+          blocks.push({ type: 'heading', raw: line });
+          i++;
+          continue;
+        }
+
+        if (/^(-{3,}|\*{3,}|_{3,})\s*$/.test(line.trim())) {
+          blocks.push({ type: 'hr', raw: line });
+          i++;
+          continue;
+        }
+
+        if (line.trim().startsWith('```')) {
+          const lang = line.trim().slice(3).trim();
+          const codeLines = [];
+          i++;
+          while (i < lines.length && !lines[i].trim().startsWith('```')) {
+            codeLines.push(lines[i]);
+            i++;
+          }
+          if (i < lines.length) i++;
+          const codeContent = codeLines.join('\n');
+          if (lang === 'mermaid') {
+            blocks.push({ type: 'mermaid', raw: '```mermaid\n' + codeContent + '\n```', code: codeContent });
+          } else {
+            blocks.push({ type: 'code', raw: '```' + (lang ? lang : '') + '\n' + codeContent + '\n```', code: codeContent, lang: lang || 'text' });
+          }
+          continue;
+        }
+
+        if (line.includes('|') && i + 1 < lines.length && /^\|?\s*[-:]+[-|:\s]+/.test(lines[i + 1])) {
+          const tableLines = [line];
+          i++;
+          while (i < lines.length && lines[i].includes('|') && lines[i].trim() !== '') {
+            tableLines.push(lines[i]);
+            i++;
+          }
+          blocks.push({ type: 'table', raw: tableLines.join('\n') });
+          continue;
+        }
+
+        if (line.trim().startsWith('>')) {
+          const quoteLines = [];
+          while (i < lines.length && (lines[i].trim().startsWith('>') || (lines[i].trim() !== '' && quoteLines.length > 0 && !lines[i].trim().startsWith('#')))) {
+            quoteLines.push(lines[i]);
+            i++;
+            if (lines[i] && lines[i].trim() === '') break;
+          }
+          blocks.push({ type: 'blockquote', raw: quoteLines.join('\n') });
+          continue;
+        }
+
+        if (/^\s*[-*+]\s/.test(line) || /^\s*\d+\.\s/.test(line)) {
+          const listLines = [];
+          while (i < lines.length && (/^\s*[-*+]\s/.test(lines[i]) || /^\s*\d+\.\s/.test(lines[i]) || (lines[i].trim() !== '' && /^\s{2,}/.test(lines[i])))) {
+            listLines.push(lines[i]);
+            i++;
+          }
+          blocks.push({ type: 'list', raw: listLines.join('\n') });
+          continue;
+        }
+
+        const paraLines = [];
+        while (i < lines.length && lines[i].trim() !== '' && !lines[i].trim().startsWith('#') && !lines[i].trim().startsWith('```') && !lines[i].trim().startsWith('>') && !/^\s*[-*+]\s/.test(lines[i]) && !/^\s*\d+\.\s/.test(lines[i]) && !/^(-{3,}|\*{3,}|_{3,})\s*$/.test(lines[i].trim())) {
+          paraLines.push(lines[i]);
+          i++;
+        }
+        if (paraLines.length > 0) {
+          blocks.push({ type: 'paragraph', raw: paraLines.join('\n') });
+        }
+      }
+
+      return blocks;
+    }
+
+    function rebuildSource(blocks) {
+      return blocks.map(b => b.raw).join('\n\n') + '\n';
+    }
+
+    function renderPreview() {
+      blockMap = [];
+      mermaidCounter = 0;
+      codeBlockCounter = 0;
+      preview.innerHTML = '';
+
+      const blocks = parseBlocks(markdownSource);
+
+      blocks.forEach((block, index) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'md-block';
+        wrapper.dataset.blockIndex = index;
+
+        if (block.type === 'mermaid') {
+          renderMermaidBlock(wrapper, block, index);
+        } else if (block.type === 'code') {
+          renderCodeBlock(wrapper, block, index);
+        } else {
+          const htmlContent = marked.parse(block.raw);
+          wrapper.innerHTML = htmlContent + '<span class="edit-hint">点击编辑</span>';
+        }
+
+        wrapper.addEventListener('mousedown', (e) => {
+          if (isEditing) return;
+          if (tocClickScrolling) return;
+          if (e.target.tagName === 'A') return;
+          if (e.target.closest('.mermaid-block')) return;
+          if (e.target.closest('.code-block')) return;
+          wrapper._editClick = true;
+        });
+
+        wrapper.addEventListener('click', (e) => {
+          if (isEditing) return;
+          if (tocClickScrolling) return;
+          if (e.target.tagName === 'A') return;
+          if (e.target.closest('.mermaid-block')) return;
+          if (e.target.closest('.code-block')) return;
+          if (wrapper._editClick) {
+            wrapper._editClick = false;
+            startEditing(wrapper, index);
+          }
+        });
+
+        preview.appendChild(wrapper);
+        blockMap.push({ index, type: block.type, raw: block.raw, element: wrapper });
+      });
+
+      renderMermaidDiagrams();
+      highlightCodeBlocks();
+      updateTOC(blocks);
+    }
+
+    // ===== 普通代码块渲染 =====
+    function renderCodeBlock(wrapper, block, index) {
+      const blockId = 'code-block-' + codeBlockCounter++;
+      const lang = block.lang || 'text';
+      wrapper.style.cursor = 'default';
+
+      let highlightedCode = escapeHtml(block.code);
+      try {
+        if (hljs.getLanguage(lang)) {
+          highlightedCode = hljs.highlight(block.code, { language: lang }).value;
+        } else {
+          highlightedCode = hljs.highlightAuto(block.code).value;
+        }
+      } catch (e) {
+        highlightedCode = escapeHtml(block.code);
+      }
+
+      wrapper.innerHTML = `
+        <div class="code-block" id="${blockId}">
+          <div class="code-header">
+            <span class="code-lang">${lang}</span>
+            <button class="code-edit-btn" onclick="toggleCodeEdit('${blockId}', ${index})">编辑</button>
+          </div>
+          <div class="code-content code-display" data-view="display">
+            <pre><code class="hljs language-${lang}">${highlightedCode}</code></pre>
+          </div>
+          <div class="code-editor-wrapper" data-view="editor" style="display:none;">
+            <textarea class="code-editor" spellcheck="false">${escapeHtml(block.code)}</textarea>
+            <button class="code-apply-btn" onclick="applyCodeEdit('${blockId}', ${index})">应用更改</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function toggleCodeEdit(blockId, blockIndex) {
+      const block = document.getElementById(blockId);
+      const display = block.querySelector('.code-display');
+      const editor = block.querySelector('.code-editor-wrapper');
+      const btn = block.querySelector('.code-edit-btn');
+
+      if (editor.style.display === 'none') {
+        display.style.display = 'none';
+        editor.style.display = 'block';
+        btn.textContent = '取消';
+        block.querySelector('.code-editor').focus();
+      } else {
+        display.style.display = 'block';
+        editor.style.display = 'none';
+        btn.textContent = '编辑';
+      }
+    }
+
+    function applyCodeEdit(blockId, blockIndex) {
+      const block = document.getElementById(blockId);
+      const textarea = block.querySelector('.code-editor');
+      const newCode = textarea.value;
+      const lang = blockMap[blockIndex].lang || 'text';
+
+      blockMap[blockIndex].raw = '```' + lang + '\n' + newCode + '\n```';
+      blockMap[blockIndex].code = newCode;
+
+      markdownSource = rebuildSource(blockMap.map(b => ({ type: b.type, raw: b.raw, lang: b.lang, code: b.code })));
+
+      if (currentFile) {
+        currentFile.content = markdownSource;
         saveFiles();
       }
-      renderFileList();
+
+      // 更新显示
+      let highlightedCode = escapeHtml(newCode);
+      try {
+        if (hljs.getLanguage(lang)) {
+          highlightedCode = hljs.highlight(newCode, { language: lang }).value;
+        }
+      } catch (e) {}
+
+      block.querySelector('.code-display pre code').innerHTML = highlightedCode;
+      toggleCodeEdit(blockId, blockIndex);
+
+      const blocks = parseBlocks(markdownSource);
+      updateTOC(blocks);
     }
 
-    // 保存文件到localStorage
-    function saveFiles() {
-      localStorage.setItem('markdown-files', JSON.stringify(files));
+    function highlightCodeBlocks() {
+      document.querySelectorAll('.code-content pre code:not(.hljs)').forEach(block => {
+        hljs.highlightElement(block);
+      });
     }
 
-    // 生成唯一ID
+    // ===== Mermaid 代码块渲染 =====
+    function renderMermaidBlock(wrapper, block, index) {
+      const blockId = 'mermaid-block-' + mermaidCounter++;
+      wrapper.style.cursor = 'default';
+
+      wrapper.innerHTML = `
+        <div class="code-block" id="${blockId}">
+          <div class="code-header">
+            <span class="code-lang">mermaid</span>
+            <button class="code-edit-btn" onclick="toggleMermaidEdit('${blockId}', ${index})">编辑</button>
+          </div>
+          <div class="code-content code-display" data-view="display">
+            <div class="mermaid-graph" data-mermaid-code="${encodeURIComponent(block.code)}">加载中...</div>
+          </div>
+          <div class="code-editor-wrapper" data-view="editor" style="display:none;">
+            <textarea class="code-editor" spellcheck="false">${escapeHtml(block.code)}</textarea>
+            <button class="code-apply-btn" onclick="applyMermaidCode('${blockId}', ${index})">应用更改</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function toggleMermaidEdit(blockId, blockIndex) {
+      const block = document.getElementById(blockId);
+      const display = block.querySelector('.code-display');
+      const editor = block.querySelector('.code-editor-wrapper');
+      const btn = block.querySelector('.code-edit-btn');
+
+      if (editor.style.display === 'none') {
+        display.style.display = 'none';
+        editor.style.display = 'block';
+        btn.textContent = '取消';
+        block.querySelector('.code-editor').focus();
+      } else {
+        display.style.display = 'block';
+        editor.style.display = 'none';
+        btn.textContent = '编辑';
+      }
+    }
+
+    function applyMermaidCode(blockId, blockIndex) {
+      const block = document.getElementById(blockId);
+      const textarea = block.querySelector('.code-editor');
+      const newCode = textarea.value;
+
+      blockMap[blockIndex].raw = '```mermaid\n' + newCode + '\n```';
+      blockMap[blockIndex].code = newCode;
+      markdownSource = rebuildSource(blockMap.map(b => ({ type: b.type, raw: b.raw, code: b.type === 'mermaid' ? newCode : undefined })));
+
+      const graphDiv = block.querySelector('.mermaid-graph');
+      graphDiv.dataset.mermaidCode = encodeURIComponent(newCode);
+      graphDiv.innerHTML = '加载中...';
+
+      mermaid.render(blockId + '-graph-' + Date.now(), newCode).then(({ svg }) => {
+        graphDiv.innerHTML = svg;
+      }).catch(e => {
+        console.error('Mermaid render error:', e);
+        graphDiv.innerHTML = '<pre style="color:red;">渲染失败: ' + escapeHtml(e.message || String(e)) + '</pre>';
+      });
+
+      toggleMermaidEdit(blockId, blockIndex);
+
+      if (currentFile) {
+        currentFile.content = markdownSource;
+        saveFiles();
+      }
+
+      const blocks = parseBlocks(markdownSource);
+      updateTOC(blocks);
+    }
+
+    async function renderMermaidDiagrams() {
+      const mermaidElements = document.querySelectorAll('.mermaid-graph[data-mermaid-code]');
+      for (const element of mermaidElements) {
+        try {
+          const code = decodeURIComponent(element.dataset.mermaidCode);
+          const id = 'mermaid-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+          const { svg } = await mermaid.render(id, code);
+          element.innerHTML = svg;
+        } catch (e) {
+          console.error('Mermaid render error:', e);
+          element.innerHTML = '<pre style="color:red;">渲染失败</pre>';
+        }
+      }
+    }
+
+    function startEditing(wrapper, blockIndex) {
+      isEditing = true;
+      wrapper.classList.add('editing');
+      const block = blockMap[blockIndex];
+
+      const editor = document.createElement('textarea');
+      editor.className = 'md-block-editor';
+      editor.value = block.raw;
+      editor.spellcheck = false;
+
+      wrapper.innerHTML = '';
+      wrapper.appendChild(editor);
+      editor.focus();
+
+      function autoResize() {
+        editor.style.height = 'auto';
+        editor.style.height = Math.max(60, editor.scrollHeight) + 'px';
+      }
+      autoResize();
+      editor.addEventListener('input', autoResize);
+
+      function saveEdit() {
+        const newRaw = editor.value;
+        blockMap[blockIndex].raw = newRaw;
+
+        if (block.type === 'mermaid') {
+          const codeMatch = newRaw.match(/```mermaid\n([\s\S]*?)\n```/);
+          if (codeMatch) {
+            block.code = codeMatch[1];
+          }
+        }
+
+        markdownSource = rebuildSource(blockMap.map(b => {
+          const item = { type: b.type, raw: b.raw };
+          if (b.type === 'mermaid') {
+            const codeMatch = b.raw.match(/```mermaid\n([\s\S]*?)\n```/);
+            item.code = codeMatch ? codeMatch[1] : '';
+          }
+          return item;
+        }));
+
+        if (currentFile) {
+          currentFile.content = markdownSource;
+          saveFiles();
+        }
+
+        isEditing = false;
+        renderPreview();
+      }
+
+      editor.addEventListener('blur', () => {
+        setTimeout(() => {
+          if (isEditing) saveEdit();
+        }, 100);
+      });
+
+      editor.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.key === 'Enter') {
+          e.preventDefault();
+          e.stopPropagation();
+          saveEdit();
+        }
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          e.stopPropagation();
+          isEditing = false;
+          renderPreview();
+        }
+      });
+    }
+
+    // ===== 目录树 =====
+
+    function updateTOC(blocks) {
+      const headings = [];
+      blocks.forEach((block, index) => {
+        if (block.type === 'heading') {
+          const match = block.raw.match(/^(#{1,3})\s+(.+)/);
+          if (match) {
+            const level = match[1].length;
+            const text = match[2].replace(/[*_`~]/g, '').trim();
+            headings.push({ level, text, blockIndex: index });
+          }
+        }
+      });
+
+      if (headings.length === 0) {
+        tocTree.innerHTML = '<div class="toc-empty">暂无目录</div>';
+        return;
+      }
+
+      const ul = document.createElement('ul');
+      ul.className = 'toc-tree';
+
+      headings.forEach(h => {
+        const li = document.createElement('div');
+        li.className = `toc-item level-${h.level}`;
+        li.dataset.blockIndex = h.blockIndex;
+
+        const icons = { 1: '■', 2: '▪', 3: '·' };
+        li.innerHTML = `<span class="toc-icon">${icons[h.level] || '·'}</span><span>${escapeHtml(h.text)}</span>`;
+
+        li.addEventListener('click', (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+
+          tocTree.querySelectorAll('.toc-item').forEach(item => item.classList.remove('active'));
+          li.classList.add('active');
+
+          const blockEl = preview.querySelector(`[data-block-index="${h.blockIndex}"]`);
+          if (blockEl) {
+            tocClickScrolling = true;
+            const container = previewContainer;
+            const targetTop = blockEl.offsetTop - preview.offsetTop - 20;
+            container.scrollTo({ top: targetTop, behavior: 'smooth' });
+            setTimeout(() => {
+              tocClickScrolling = false;
+            }, 800);
+          }
+        });
+
+        ul.appendChild(li);
+      });
+
+      tocTree.innerHTML = '';
+      tocTree.appendChild(ul);
+    }
+
+    // ===== 文件管理 =====
+
     function generateId() {
       return Date.now().toString(36) + Math.random().toString(36).substr(2);
     }
 
-    // 渲染文件列表
+    function loadFiles() {
+      // 检查版本，清除旧数据
+      const version = '2.0';
+      const savedVersion = localStorage.getItem('markdown-files-version');
+      if (savedVersion !== version) {
+        localStorage.removeItem('markdown-files');
+        localStorage.setItem('markdown-files-version', version);
+      }
+
+      const savedFiles = localStorage.getItem('markdown-files');
+      if (savedFiles) {
+        files = JSON.parse(savedFiles);
+      } else {
+        files = [];
+      }
+      renderFileList();
+    }
+
+    function saveFiles() {
+      localStorage.setItem('markdown-files', JSON.stringify(files));
+    }
+
     function renderFileList() {
       fileList.innerHTML = '';
       files.forEach(file => {
         const fileItem = document.createElement('div');
         fileItem.className = 'file-item' + (currentFile && currentFile.id === file.id ? ' active' : '');
         fileItem.innerHTML = `
-          <span>${file.name}</span>
+          <span class="file-name">${escapeHtml(file.name)}</span>
           <div class="file-actions">
-            <button onclick="openFileFromList('${file.id}')" title="打开">📄</button>
-            <button onclick="deleteFile('${file.id}')" title="删除">🗑️</button>
+            <button onclick="event.stopPropagation();deleteFile('${file.id}')" title="删除">✕</button>
           </div>
         `;
         fileItem.onclick = () => openFileFromList(file.id);
@@ -623,38 +1480,35 @@
       });
     }
 
-    // 从列表打开文件
     function openFileFromList(fileId) {
+      if (isEditing) return;
       const file = files.find(f => f.id === fileId);
       if (file) {
         currentFile = file;
-        editor.value = file.content;
+        markdownSource = file.content;
         fileInfo.textContent = file.name;
-        updatePreview();
+        renderPreview();
         renderFileList();
       }
     }
 
-    // 创建新文件
     function createNewFile() {
       newFileModal.classList.add('active');
       newFileName.value = 'untitled.md';
       newFileName.focus();
     }
 
-    // 关闭新建文件模态框
     function closeNewFileModal() {
       newFileModal.classList.remove('active');
     }
 
-    // 确认创建新文件
     function confirmNewFile() {
       const fileName = newFileName.value.trim();
       if (fileName) {
         const newFile = {
           id: generateId(),
           name: fileName,
-          content: ''
+          content: '# ' + fileName.replace(/\.(md|markdown|txt)$/, '') + '\n\n'
         };
         files.push(newFile);
         saveFiles();
@@ -664,155 +1518,456 @@
       }
     }
 
-    // 删除文件
     function deleteFile(fileId) {
-      if (confirm('确定要删除此文件吗？')) {
-        files = files.filter(f => f.id !== fileId);
-        if (currentFile && currentFile.id === fileId) {
-          currentFile = files.length > 0 ? files[0] : null;
-          if (currentFile) {
-            editor.value = currentFile.content;
-            fileInfo.textContent = currentFile.name;
-            updatePreview();
-          } else {
-            editor.value = '';
-            fileInfo.textContent = '未命名.md';
-            updatePreview();
-          }
-        }
-        saveFiles();
-        renderFileList();
-      }
+      pendingDeleteFileId = fileId;
+      deleteModal.classList.add('active');
     }
 
-    // 刷新文件列表
+    function closeDeleteModal() {
+      deleteModal.classList.remove('active');
+      pendingDeleteFileId = null;
+    }
+
+    function confirmDelete() {
+      if (!pendingDeleteFileId) return;
+
+      const fileId = pendingDeleteFileId;
+      files = files.filter(f => f.id !== fileId);
+      if (currentFile && currentFile.id === fileId) {
+        currentFile = files.length > 0 ? files[0] : null;
+        if (currentFile) {
+          markdownSource = currentFile.content;
+          fileInfo.textContent = currentFile.name;
+          renderPreview();
+        } else {
+          markdownSource = '';
+          fileInfo.textContent = '未命名.md';
+          preview.innerHTML = '<div class="toc-empty" style="padding:40px;">请打开或创建一个文件</div>';
+          tocTree.innerHTML = '<div class="toc-empty">暂无目录</div>';
+        }
+      }
+      saveFiles();
+      renderFileList();
+      closeDeleteModal();
+    }
+
     function refreshFiles() {
       loadFiles();
     }
 
-    // 实时预览
-    editor.addEventListener('input', () => {
-      updatePreview();
-      // 自动保存当前文件
-      if (currentFile) {
-        currentFile.content = editor.value;
-        saveFiles();
-      }
-    });
+    // ===== 打开/保存文件 =====
 
-    function updatePreview() {
-      const content = editor.value;
-      preview.innerHTML = marked.parse(content);
-    }
-
-    // 切换视图
-    function toggleView() {
-      isSplitView = !isSplitView;
-      if (isSplitView) {
-        editorContainer.classList.remove('full-screen');
-        previewContainer.classList.remove('full-screen');
-        editorContainer.style.display = 'block';
-        previewContainer.style.display = 'block';
-      } else {
-        editorContainer.classList.add('full-screen');
-        previewContainer.classList.add('full-screen');
-        // 切换显示/隐藏
-        if (editorContainer.style.display === 'none') {
-          editorContainer.style.display = 'block';
-          previewContainer.style.display = 'none';
-        } else {
-          editorContainer.style.display = 'none';
-          previewContainer.style.display = 'block';
+    async function openFile() {
+      if (isElectron && window.electronAPI) {
+        // Electron 环境：使用原生文件对话框
+        const result = await window.electronAPI.openFile();
+        if (result && result.length > 0) {
+          for (const file of result) {
+            processFileContent(file.name, file.content);
+          }
         }
+      } else {
+        // 浏览器环境：使用隐藏的 file input
+        fileInput.click();
       }
-    }
-
-    // 打开文件
-    function openFile() {
-      fileInput.click();
     }
 
     fileInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const content = e.target.result;
-          // 创建新文件
-          const newFile = {
-            id: generateId(),
-            name: file.name,
-            content: content
-          };
-          files.push(newFile);
-          saveFiles();
-          renderFileList();
-          openFileFromList(newFile.id);
-        };
-        reader.readAsText(file);
+        processFile(file);
       }
+      fileInput.value = '';
     });
 
-    // 保存文件
-    function saveFile() {
+    // 处理文件（支持HTML转Markdown）
+    function processFile(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        let content = e.target.result;
+        let fileName = file.name;
+
+        // 检查是否是HTML文件
+        if (file.name.endsWith('.html') || file.name.endsWith('.htm')) {
+          if (turndownService) {
+            try {
+              content = turndownService.turndown(content);
+              fileName = file.name.replace(/\.(html|htm)$/, '.md');
+              console.log('HTML converted to Markdown successfully');
+            } catch (err) {
+              console.error('HTML conversion error:', err);
+              alert('HTML转换失败，将保留原始内容');
+            }
+          } else {
+            alert('HTML转换服务未加载，请检查网络连接');
+          }
+        }
+
+        const newFile = {
+          id: generateId(),
+          name: fileName,
+          content: content
+        };
+        files.push(newFile);
+        saveFiles();
+        renderFileList();
+        openFileFromList(newFile.id);
+      };
+      reader.readAsText(file);
+    }
+
+    // 处理文件内容（Electron 环境调用）
+    function processFileContent(fileName, content) {
+      // 检查是否是HTML文件
+      if (fileName.endsWith('.html') || fileName.endsWith('.htm')) {
+        if (turndownService) {
+          try {
+            content = turndownService.turndown(content);
+            fileName = fileName.replace(/\.(html|htm)$/, '.md');
+            console.log('HTML converted to Markdown successfully');
+          } catch (err) {
+            console.error('HTML conversion error:', err);
+          }
+        }
+      }
+
+      const newFile = {
+        id: generateId(),
+        name: fileName,
+        content: content
+      };
+      files.push(newFile);
+      saveFiles();
+      renderFileList();
+      openFileFromList(newFile.id);
+    }
+
+    async function saveFile() {
       if (currentFile) {
-        const content = editor.value;
-        const blob = new Blob([content], { type: 'text/markdown' });
-        const url = URL.createObjectURL(blob);
-        downloadLink.href = url;
-        downloadLink.download = currentFile.name;
-        downloadLink.click();
-        URL.revokeObjectURL(url);
+        if (isElectron && window.electronAPI) {
+          // Electron 环境：使用原生保存对话框
+          const result = await window.electronAPI.saveAs(markdownSource, currentFile.name);
+          if (result && result.success) {
+            console.log('File saved to:', result.filePath);
+          }
+        } else {
+          // 浏览器环境：使用下载链接
+          const blob = new Blob([markdownSource], { type: 'text/markdown' });
+          const url = URL.createObjectURL(blob);
+          downloadLink.href = url;
+          downloadLink.download = currentFile.name;
+          downloadLink.click();
+          URL.revokeObjectURL(url);
+        }
       } else {
-        // 没有当前文件，创建新文件
         createNewFile();
       }
     }
 
-    // 窗口大小调整功能
-    function initResizers() {
-      // 中间分割线调整
-      let isResizing = false;
-      let startX, startEditorWidth;
+    // ===== 导出 HTML =====
+    async function exportHTML() {
+      const htmlContent = generateHTML();
+      const fileName = currentFile ? currentFile.name.replace(/\.md$/, '.html') : 'export.html';
 
-      const resizer = document.getElementById('resizer');
-      const editorContainer = document.querySelector('.editor-container');
-      const previewContainer = document.querySelector('.preview-container');
-      const contentArea = document.querySelector('.content-area');
-
-      if (resizer) {
-        resizer.addEventListener('mousedown', (e) => {
-          isResizing = true;
-          startX = e.clientX;
-          startEditorWidth = editorContainer.offsetWidth;
-          document.body.style.cursor = 'col-resize';
-        });
-
-        document.addEventListener('mousemove', (e) => {
-          if (!isResizing) return;
-          const deltaX = e.clientX - startX;
-          const newEditorWidth = startEditorWidth + deltaX;
-          const contentWidth = contentArea.offsetWidth;
-          const newPreviewWidth = contentWidth - newEditorWidth - 4; // 4px是resizer的宽度
-          
-          if (newEditorWidth > 300 && newPreviewWidth > 300) {
-            editorContainer.style.width = newEditorWidth + 'px';
-            previewContainer.style.flex = 'none';
-            previewContainer.style.width = newPreviewWidth + 'px';
-          }
-        });
-
-        document.addEventListener('mouseup', () => {
-          isResizing = false;
-          document.body.style.cursor = '';
-        });
+      if (isElectron && window.electronAPI) {
+        // Electron 环境下使用原生对话框
+        const result = await window.electronAPI.exportHTML(htmlContent, fileName);
+        if (result && result.success) {
+          console.log('HTML exported to:', result.filePath);
+        }
+      } else {
+        // 浏览器环境下使用下载链接
+        const blob = new Blob([htmlContent], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        downloadLink.href = url;
+        downloadLink.download = fileName;
+        downloadLink.click();
+        URL.revokeObjectURL(url);
       }
     }
 
-    // 快捷键
+    function generateHTML() {
+      // 获取当前预览的 HTML 内容
+      const previewContent = preview.innerHTML;
+
+      // 构建完整的 HTML 文档
+      return `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${currentFile ? escapeHtml(currentFile.name) : 'Exported Document'}</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #fff;
+      padding: 40px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 2em;
+      margin: 1em 0 0.5em;
+      padding-bottom: 0.3em;
+      border-bottom: 1px solid #eaecef;
+    }
+
+    h2 {
+      font-size: 1.5em;
+      margin: 1em 0 0.5em;
+      padding-bottom: 0.3em;
+      border-bottom: 1px solid #eaecef;
+    }
+
+    h3 {
+      font-size: 1.25em;
+      margin: 1em 0 0.5em;
+    }
+
+    h4 {
+      font-size: 1em;
+      margin: 1em 0 0.5em;
+    }
+
+    h5 {
+      font-size: 0.875em;
+      margin: 1em 0 0.5em;
+    }
+
+    h6 {
+      font-size: 0.85em;
+      color: #6a737d;
+      margin: 1em 0 0.5em;
+    }
+
+    p {
+      margin: 1em 0;
+    }
+
+    blockquote {
+      border-left: 4px solid #ddd;
+      padding: 0 1em;
+      color: #666;
+      margin: 1em 0;
+    }
+
+    ul, ol {
+      margin: 1em 0;
+      padding-left: 2em;
+    }
+
+    li {
+      margin: 0.5em 0;
+    }
+
+    code {
+      background-color: #f6f8fa;
+      padding: 0.2em 0.4em;
+      border-radius: 3px;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 0.9em;
+    }
+
+    pre {
+      background-color: #f6f8fa;
+      padding: 1em;
+      border-radius: 6px;
+      overflow-x: auto;
+      margin: 1em 0;
+    }
+
+    pre code {
+      background-color: transparent;
+      padding: 0;
+    }
+
+    a {
+      color: #0366d6;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    img {
+      max-width: 100%;
+      margin: 1em 0;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f6f8fa;
+      font-weight: 600;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f6f8fa;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid #eaecef;
+      margin: 2em 0;
+    }
+
+    /* 代码块样式 */
+    .code-block {
+      position: relative;
+      margin: 1em 0;
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+      overflow: hidden;
+      background-color: #fafbfc;
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 12px;
+      background-color: #f1f3f5;
+      border-bottom: 1px solid #e1e4e8;
+      font-size: 12px;
+      color: #666;
+    }
+
+    .code-lang {
+      font-weight: 500;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+
+    .code-content {
+      padding: 12px;
+      overflow-x: auto;
+    }
+
+    .code-content pre {
+      margin: 0;
+      background: transparent;
+      padding: 0;
+    }
+
+    /* Mermaid 图表 */
+    .mermaid-graph {
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .mermaid-graph svg {
+      max-width: 100%;
+      height: auto;
+    }
+
+    /* 编辑相关元素隐藏 */
+    .edit-hint,
+    .code-edit-btn,
+    .code-editor-wrapper,
+    .md-block-editor {
+      display: none !important;
+    }
+
+    /* 代码高亮 */
+    .hljs {
+      display: block;
+      overflow-x: auto;
+      padding: 0;
+      background: transparent;
+      color: #24292e;
+    }
+
+    .hljs-keyword,
+    .hljs-selector-tag,
+    .hljs-subst {
+      color: #d73a49;
+      font-weight: bold;
+    }
+
+    .hljs-string,
+    .hljs-doctag {
+      color: #032f62;
+    }
+
+    .hljs-number,
+    .hljs-literal {
+      color: #005cc5;
+    }
+
+    .hljs-comment {
+      color: #6a737d;
+    }
+
+    .hljs-function {
+      color: #6f42c1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+${previewContent}
+  </div>
+</body>
+</html>`;
+    }
+
+    // ===== 滚动监听：高亮当前目录项 =====
+    previewContainer.addEventListener('scroll', () => {
+      if (tocClickScrolling) return;
+      const blockElements = preview.querySelectorAll('.md-block');
+      const containerRect = previewContainer.getBoundingClientRect();
+      let activeIndex = -1;
+
+      blockElements.forEach(el => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top <= containerRect.top + 100) {
+          activeIndex = parseInt(el.dataset.blockIndex);
+        }
+      });
+
+      if (activeIndex >= 0) {
+        const tocItems = tocTree.querySelectorAll('.toc-item');
+        tocItems.forEach(item => {
+          const itemIndex = parseInt(item.dataset.blockIndex);
+          if (itemIndex === activeIndex) {
+            item.classList.add('active');
+            item.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+          } else {
+            item.classList.remove('active');
+          }
+        });
+      }
+    });
+
+    // ===== 快捷键 =====
     document.addEventListener('keydown', (e) => {
+      if (isEditing) return;
       if (e.ctrlKey) {
-        switch(e.key) {
+        switch (e.key) {
           case 'o':
             e.preventDefault();
             openFile();
@@ -821,79 +1976,100 @@
             e.preventDefault();
             saveFile();
             break;
-          case 'Tab':
-            e.preventDefault();
-            toggleView();
-            break;
           case 'n':
             e.preventDefault();
             createNewFile();
             break;
         }
       }
-      // Ctrl+Enter 切换视图
-      if (e.ctrlKey && e.key === 'Enter') {
-        e.preventDefault();
-        toggleView();
-      }
     });
 
-    // 点击模态框外部关闭
+    // ===== 模态框关闭 =====
     newFileModal.addEventListener('click', (e) => {
       if (e.target === newFileModal) {
         closeNewFileModal();
       }
     });
 
-    // 初始化文件拖放功能
+    deleteModal.addEventListener('click', (e) => {
+      if (e.target === deleteModal) {
+        closeDeleteModal();
+      }
+    });
+
+    // ===== 文件拖放 =====
     function initFileDrop() {
       const workspacePanel = document.querySelector('.workspace-panel');
-      
+
       workspacePanel.addEventListener('dragover', (e) => {
         e.preventDefault();
         workspacePanel.style.backgroundColor = '#e0e0e0';
       });
-      
+
       workspacePanel.addEventListener('dragleave', (e) => {
         e.preventDefault();
         workspacePanel.style.backgroundColor = '#f5f5f5';
       });
-      
-      workspacePanel.addEventListener('drop', (e) => {
+
+      workspacePanel.addEventListener('drop', async (e) => {
         e.preventDefault();
         workspacePanel.style.backgroundColor = '#f5f5f5';
-        
+
         const droppedFiles = e.dataTransfer.files;
-        for (let i = 0; i < droppedFiles.length; i++) {
-          const file = droppedFiles[i];
-          if (file.type === 'text/markdown' || file.name.endsWith('.md') || file.name.endsWith('.markdown')) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-              const content = e.target.result;
-              const newFile = {
-                id: generateId(),
+
+        if (isElectron && window.electronAPI) {
+          // Electron 环境：通过 IPC 处理文件
+          const fileList = [];
+          for (let i = 0; i < droppedFiles.length; i++) {
+            const file = droppedFiles[i];
+            if (file.name.endsWith('.md') || file.name.endsWith('.markdown') ||
+                file.name.endsWith('.html') || file.name.endsWith('.htm') ||
+                file.name.endsWith('.txt')) {
+              fileList.push({
                 name: file.name,
-                content: content
-              };
-              files.push(newFile);
-              saveFiles();
-              renderFileList();
-              openFileFromList(newFile.id);
-            };
-            reader.readAsText(file);
+                path: file.path  // Electron 提供的文件路径
+              });
+            }
+          }
+          if (fileList.length > 0) {
+            const result = await window.electronAPI.handleDropFiles(fileList);
+            if (result && result.length > 0) {
+              for (const file of result) {
+                processFileContent(file.name, file.content);
+              }
+            }
+          }
+        } else {
+          // 浏览器环境：使用 FileReader
+          for (let i = 0; i < droppedFiles.length; i++) {
+            const file = droppedFiles[i];
+            if (file.type === 'text/markdown' ||
+                file.name.endsWith('.md') ||
+                file.name.endsWith('.markdown') ||
+                file.name.endsWith('.html') ||
+                file.name.endsWith('.htm')) {
+              processFile(file);
+            }
           }
         }
       });
     }
 
-    // 初始化
+    // ===== 工具函数 =====
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ===== 初始化 =====
+    initTurndown();
     loadFiles();
-    initResizers();
     initFileDrop();
     if (files.length > 0) {
       openFileFromList(files[0].id);
     } else {
-      updatePreview();
+      preview.innerHTML = '<div class="toc-empty" style="padding:40px;">请打开或创建一个文件</div>';
     }
   </script>
 </body>

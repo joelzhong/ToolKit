@@ -1,77 +1,114 @@
 # Markdown Reader
 
-一个简洁的Markdown阅读器和编辑器，基于Web技术构建。
+一个离线可用的 Markdown 编辑器，支持实时预览、代码高亮、Mermaid 流程图、目录导航等功能。
 
 ## 功能特性
 
-- ✅ 实时Markdown预览（编辑与预览同步显示）
-- ✅ 分割视图（左侧编辑，右侧预览）
-- ✅ 左侧边栏显示文件列表
-- ✅ 拖拽调整分割比例
-- ✅ 代码语法高亮
-- ✅ 响应式设计，界面美观
+- 📝 实时 Markdown 预览
+- 🎨 代码高亮（支持 JavaScript、Python、Java、C++、SQL、JSON 等）
+- 📊 Mermaid 流程图支持
+- 📑 目录导航（自动提取 h1/h2/h3）
+- 📁 工作空间管理
+- 💾 本地存储自动保存
+- 🌐 HTML 导出
+- 🔄 HTML 转 Markdown（拖入 HTML 文件自动转换）
+- 📦 离线使用（无需网络）
 
-## 快捷键
+## 使用方式
 
-- `Ctrl+O` - 打开文件
-- `Ctrl+S` - 保存文件
+### 方式一：直接打开 HTML（浏览器）
 
-## 项目结构
+1. 确保目录结构完整：
+   ```
+   markdown-reader/
+   ├── markdown-browser.html    # 主应用文件
+   ├── js/                      # JS 依赖目录
+   │   ├── marked.min.js
+   │   ├── highlight.core.min.js
+   │   ├── highlight.*.min.js
+   │   ├── mermaid.min.js
+   │   └── turndown.min.js
+   └── css/                     # CSS 样式目录
+       └── github.min.css
+   ```
+
+2. 双击 `markdown-browser.html` 即可在浏览器中打开
+
+### 方式二：Electron 桌面应用（推荐）
+
+#### 安装依赖
+
+```bash
+npm install
+```
+
+#### 开发模式运行
+
+```bash
+npm start
+```
+
+#### 打包应用
+
+```bash
+# 打包所有平台
+npm run build
+
+# 仅打包 Windows
+npm run build:win
+
+# 仅打包 macOS
+npm run build:mac
+
+# 仅打包 Linux
+npm run build:linux
+```
+
+打包后的应用位于 `dist` 目录。
+
+## 文件结构
 
 ```
 markdown-reader/
-├── markdown-browser.html   # 主应用（HTML + CSS + JS）
-└── README.md              # 说明文档
+├── markdown-browser.html    # 主应用文件
+├── main.js                  # Electron 主进程
+├── preload.js               # Electron 预加载脚本
+├── package.json             # 项目配置
+├── README.md                # 本文件
+├── js/                      # JavaScript 依赖
+│   ├── marked.min.js        # Markdown 解析器
+│   ├── highlight.core.min.js    # 代码高亮核心
+│   ├── highlight.javascript.min.js
+│   ├── highlight.python.min.js
+│   ├── highlight.java.min.js
+│   ├── highlight.cpp.min.js
+│   ├── highlight.sql.min.js
+│   ├── highlight.json.min.js
+│   ├── mermaid.min.js       # Mermaid 流程图
+│   └── turndown.min.js      # HTML 转 Markdown
+└── css/                     # CSS 样式
+    └── github.min.css       # 代码高亮样式
 ```
 
-## 如何运行
+## 快捷键
 
-直接在浏览器中打开 `markdown-browser.html` 即可使用：
-
-```bash
-# 直接用浏览器打开
-start markdown-browser.html  # Windows
-open markdown-browser.html   # macOS
-xdg-open markdown-browser.html  # Linux
-```
-
-或者使用简单的HTTP服务器：
-
-```bash
-# Python 3
-python -m http.server 8000
-
-# Node.js
-npx http-server .
-```
-
-然后访问 http://localhost:8000/markdown-browser.html
+| 快捷键 | 功能 |
+|--------|------|
+| Ctrl + O | 打开文件 |
+| Ctrl + S | 保存文件 |
+| Ctrl + N | 新建文件 |
+| Ctrl + Enter | 保存编辑（编辑模式下） |
+| Escape | 取消编辑（编辑模式下） |
 
 ## 技术栈
 
-- HTML5 + CSS3 - 界面布局
-- JavaScript (ES6+) - 交互逻辑
-- Marked.js - Markdown解析
-- Highlight.js - 代码语法高亮
+- **前端**: 原生 HTML/CSS/JavaScript
+- **Markdown 解析**: Marked.js
+- **代码高亮**: Highlight.js
+- **流程图**: Mermaid.js
+- **HTML 转换**: Turndown.js
+- **桌面应用**: Electron
 
-## 使用说明
+## 许可证
 
-1. **打开文件**：点击左侧边栏上方的"+"按钮或使用快捷键 `Ctrl+O`
-2. **编辑内容**：在左侧编辑器中输入Markdown内容
-3. **预览效果**：右侧实时显示渲染后的Markdown效果
-4. **保存文件**：使用快捷键 `Ctrl+S` 保存更改
-
-## 注意事项
-
-- 本应用支持基本的Markdown语法
-- 支持表格、引用、列表、链接、图片等Markdown特性
-- 拖拽中间的分隔条可以调整编辑器和预览区的宽度比例
-
-## 未来改进
-
-- 添加更多Markdown扩展功能
-- 支持主题切换
-- 添加导出功能（PDF、HTML等）
-- 支持拼写检查
-- 添加目录导航功能
-- 支持代码块语法高亮
+MIT
