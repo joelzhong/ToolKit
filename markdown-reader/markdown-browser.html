@@ -1688,7 +1688,36 @@
 
     function generateHTML() {
       // 获取当前预览的 HTML 内容
-      const previewContent = preview.innerHTML;
+      let previewContent = preview.innerHTML;
+
+      // 为标题添加 id 锚点，并提取目录数据
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = previewContent;
+      const headings = tempDiv.querySelectorAll('h1, h2, h3, h4');
+      const tocItems = [];
+      const idCounters = {};
+      headings.forEach((heading) => {
+        const level = parseInt(heading.tagName.charAt(1));
+        if (level > 4) return;
+        const text = heading.textContent.trim();
+        // 生成唯一 id
+        const baseId = text.replace(/[^\w\u4e00-\u9fff]+/g, '-').replace(/^-|-$/g, '').toLowerCase();
+        if (!baseId) return;
+        idCounters[baseId] = (idCounters[baseId] || 0) + 1;
+        const id = idCounters[baseId] > 1 ? baseId + '-' + idCounters[baseId] : baseId;
+        heading.id = id;
+        tocItems.push({ id, text, level });
+      });
+      previewContent = tempDiv.innerHTML;
+
+      // 生成目录树 HTML
+      let tocHtml = '';
+      if (tocItems.length > 0) {
+        tocHtml = tocItems.map(item => {
+          const indent = (item.level - 1) * 16;
+          return '<a class="toc-link" href="#' + item.id + '" data-target="' + item.id + '" style="padding-left: ' + (12 + indent) + 'px;">' + escapeHtml(item.text) + '</a>';
+        }).join('\n');
+      }
 
       // 构建完整的 HTML 文档
       return `<!DOCTYPE html>
@@ -1709,7 +1738,82 @@
       line-height: 1.6;
       color: #333;
       background-color: #fff;
-      padding: 40px;
+    }
+
+    /* 页面布局：左侧目录 + 右侧内容 */
+    .page-wrapper {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* 左侧目录 */
+    .toc-sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 260px;
+      height: 100vh;
+      background-color: #f0f2f5;
+      border-right: 1px solid #d9dce0;
+      overflow-y: auto;
+      padding: 0 0 20px;
+      z-index: 100;
+    }
+
+    .toc-sidebar::-webkit-scrollbar {
+      width: 4px;
+    }
+    .toc-sidebar::-webkit-scrollbar-thumb {
+      background: #bbb;
+      border-radius: 2px;
+    }
+
+    .toc-title {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background-color: #e8eaed;
+      font-size: 13px;
+      font-weight: 600;
+      color: #1f2937;
+      padding: 14px 16px;
+      border-bottom: 1px solid #d9dce0;
+      margin-bottom: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .toc-link {
+      display: block;
+      padding: 7px 12px;
+      color: #4b5563;
+      text-decoration: none;
+      font-size: 13px;
+      line-height: 1.5;
+      border-left: 3px solid transparent;
+      transition: all 0.15s ease;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .toc-link:hover {
+      color: #2563eb;
+      background-color: #e2e6eb;
+    }
+
+    .toc-link.active {
+      color: #2563eb;
+      border-left-color: #2563eb;
+      background-color: #dce3ed;
+      font-weight: 500;
+    }
+
+    /* 右侧内容区 */
+    .content-area {
+      margin-left: 260px;
+      flex: 1;
+      padding: 40px 48px;
+      max-width: calc(100% - 260px);
     }
 
     .container {
@@ -1925,12 +2029,80 @@
     .hljs-function {
       color: #6f42c1;
     }
+
+    /* 响应式：小屏幕隐藏目录 */
+    @media (max-width: 900px) {
+      .toc-sidebar {
+        display: none;
+      }
+      .content-area {
+        margin-left: 0;
+        max-width: 100%;
+        padding: 20px;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="page-wrapper">
+    ${tocItems.length > 0 ? '<nav class="toc-sidebar"><div class="toc-title">目录</div>' + tocHtml + '</nav>' : ''}
+    <div class="content-area">
+      <div class="container">
 ${previewContent}
+      </div>
+    </div>
   </div>
+  <script>
+    // 目录滚动高亮与点击跳转
+    (function() {
+      var tocLinks = document.querySelectorAll('.toc-link');
+      if (tocLinks.length === 0) return;
+
+      var headings = [];
+      tocLinks.forEach(function(link) {
+        var target = document.getElementById(link.getAttribute('data-target'));
+        if (target) headings.push({ el: target, link: link });
+      });
+
+      function updateActive() {
+        var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        var activeHeading = null;
+        for (var i = headings.length - 1; i >= 0; i--) {
+          if (headings[i].el.getBoundingClientRect().top + window.pageYOffset <= scrollTop + 80) {
+            activeHeading = headings[i];
+            break;
+          }
+        }
+        tocLinks.forEach(function(l) { l.classList.remove('active'); });
+        if (activeHeading) {
+          activeHeading.link.classList.add('active');
+          var sidebar = document.querySelector('.toc-sidebar');
+          if (sidebar) {
+            var linkRect = activeHeading.link.getBoundingClientRect();
+            var sidebarRect = sidebar.getBoundingClientRect();
+            if (linkRect.top < sidebarRect.top || linkRect.bottom > sidebarRect.bottom) {
+              activeHeading.link.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            }
+          }
+        }
+      }
+
+      tocLinks.forEach(function(link) {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          var targetId = this.getAttribute('data-target');
+          var target = document.getElementById(targetId);
+          if (target) {
+            var offset = target.getBoundingClientRect().top + window.pageYOffset - 20;
+            window.scrollTo({ top: offset, behavior: 'smooth' });
+          }
+        });
+      });
+
+      window.addEventListener('scroll', updateActive, { passive: true });
+      updateActive();
+    })();
+  <\/script>
 </body>
 </html>`;
     }
